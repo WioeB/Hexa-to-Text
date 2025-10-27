@@ -1,181 +1,164 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Convertidor Hexadecimal a Texto</title>
+    <title>Hex to Text Converter</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
+            font-family: 'Segoe UI', Tahoma, sans-serif;
+            background: linear-gradient(120deg, #667eea 0%, #764ba2 100%);
+            margin: 0;
+            padding: 20px;
             display: flex;
             justify-content: center;
             align-items: center;
-            padding: 20px;
+            min-height: 100vh;
         }
 
         .container {
-            background: white;
-            border-radius: 20px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            background-color: #ffffff;
+            border-radius: 12px;
             padding: 40px;
-            max-width: 600px;
+            max-width: 580px;
             width: 100%;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
         }
 
         h1 {
-            color: #667eea;
-            text-align: center;
+            color: #2d3748;
             margin-bottom: 30px;
             font-size: 28px;
-        }
-
-        .input-group {
-            margin-bottom: 25px;
+            font-weight: 600;
         }
 
         label {
             display: block;
-            color: #333;
-            font-weight: 600;
+            color: #4a5568;
             margin-bottom: 10px;
+            font-weight: 500;
             font-size: 14px;
         }
 
-        textarea {
+        #inputHex {
             width: 100%;
-            padding: 15px;
-            border: 2px solid #e0e0e0;
-            border-radius: 10px;
-            font-size: 16px;
+            padding: 14px;
+            border: 2px solid #e2e8f0;
+            border-radius: 6px;
+            font-size: 15px;
             font-family: 'Courier New', monospace;
+            margin-bottom: 20px;
+            min-height: 110px;
             resize: vertical;
-            min-height: 120px;
-            transition: border-color 0.3s;
+            transition: border-color 0.2s;
         }
 
-        textarea:focus {
+        #inputHex:focus {
             outline: none;
             border-color: #667eea;
         }
 
-        button {
-            width: 100%;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        #convertBtn {
+            background: linear-gradient(120deg, #667eea 0%, #764ba2 100%);
             color: white;
             border: none;
-            padding: 15px;
-            border-radius: 10px;
+            padding: 14px 28px;
+            border-radius: 6px;
             font-size: 16px;
-            font-weight: 600;
             cursor: pointer;
-            transition: transform 0.2s, box-shadow 0.2s;
+            width: 100%;
+            font-weight: 500;
+            transition: all 0.3s;
         }
 
-        button:hover {
+        #convertBtn:hover {
             transform: translateY(-2px);
-            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
         }
 
-        button:active {
+        #convertBtn:active {
             transform: translateY(0);
         }
 
-        .result {
-            background: #f8f9fa;
-            border-radius: 10px;
-            padding: 15px;
-            margin-top: 20px;
-            word-wrap: break-word;
+        #output {
+            margin-top: 24px;
+            padding: 16px;
+            background-color: #f7fafc;
+            border-radius: 6px;
+            border-left: 4px solid #48bb78;
             font-family: 'Courier New', monospace;
+            word-wrap: break-word;
             display: none;
+            line-height: 1.6;
         }
 
-        .result.show {
-            display: block;
-        }
-
-        .error {
-            color: #e74c3c;
-            background: #fadbd8;
-            padding: 10px;
-            border-radius: 5px;
-            margin-top: 10px;
+        #errorMsg {
+            margin-top: 18px;
+            padding: 14px;
+            background-color: #fed7d7;
+            color: #c53030;
+            border-radius: 6px;
             display: none;
-        }
-
-        .error.show {
-            display: block;
+            border-left: 4px solid #fc8181;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>🔄 Convertidor Hexadecimal a Texto</h1>
+        <h1>Hex to Text Converter</h1>
         
-        <div class="input-group">
-            <label for="hexInput">Introduce el código hexadecimal:</label>
-            <textarea id="hexInput" placeholder="Ejemplo: 48 6F 6C 61 o 486F6C61"></textarea>
-        </div>
+        <label for="inputHex">Enter hexadecimal code:</label>
+        <textarea id="inputHex" placeholder="Example: 48656C6C6F or 48 65 6C 6C 6F"></textarea>
 
-        <button onclick="convertir()">Convertir</button>
+        <button id="convertBtn" onclick="convertHexadecimal()">Convert</button>
 
-        <div id="error" class="error"></div>
-
-        <div id="result" class="result"></div>
+        <div id="errorMsg"></div>
+        <div id="output"></div>
     </div>
 
     <script>
-        function convertir() {
-            const input = document.getElementById('hexInput').value.trim();
-            const resultDiv = document.getElementById('result');
-            const errorDiv = document.getElementById('error');
+        function convertHexadecimal() {
+            var input = document.getElementById('inputHex').value.trim();
+            var output = document.getElementById('output');
+            var errorMsg = document.getElementById('errorMsg');
 
-            resultDiv.classList.remove('show');
-            errorDiv.classList.remove('show');
+            output.style.display = 'none';
+            errorMsg.style.display = 'none';
 
-            if (!input) {
-                errorDiv.textContent = 'Por favor, introduce un código hexadecimal.';
-                errorDiv.classList.add('show');
+            if (input === '') {
+                errorMsg.textContent = 'Please enter a hexadecimal code';
+                errorMsg.style.display = 'block';
                 return;
             }
 
-            try {
-                let hex = input.replace(/[^0-9a-fA-F]/g, '');
+            var cleanHex = input.replace(/[^0-9a-fA-F]/g, '');
 
-                if (hex.length % 2 !== 0) {
-                    errorDiv.textContent = 'El código hexadecimal debe tener un número par de caracteres.';
-                    errorDiv.classList.add('show');
-                    return;
-                }
-
-                let texto = '';
-                for (let i = 0; i < hex.length; i += 2) {
-                    const byte = hex.substr(i, 2);
-                    const charCode = parseInt(byte, 16);
-                    texto += String.fromCharCode(charCode);
-                }
-
-                resultDiv.textContent = texto;
-                resultDiv.classList.add('show');
-
-            } catch (e) {
-                errorDiv.textContent = 'Error al convertir: ' + e.message;
-                errorDiv.classList.add('show');
+            if (cleanHex.length % 2 !== 0) {
+                errorMsg.textContent = 'Hexadecimal code must have an even number of characters';
+                errorMsg.style.display = 'block';
+                return;
             }
+
+            if (cleanHex.length === 0) {
+                errorMsg.textContent = 'No valid hexadecimal characters found';
+                errorMsg.style.display = 'block';
+                return;
+            }
+
+            var result = '';
+            for (var i = 0; i < cleanHex.length; i += 2) {
+                var hexPair = cleanHex.substr(i, 2);
+                var charCode = parseInt(hexPair, 16);
+                result += String.fromCharCode(charCode);
+            }
+
+            output.textContent = result;
+            output.style.display = 'block';
         }
 
-        document.getElementById('hexInput').addEventListener('keypress', function(e) {
-            if (e.key === 'Enter' && !e.shiftKey) {
-                e.preventDefault();
-                convertir();
+        document.getElementById('inputHex').addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' && e.ctrlKey) {
+                convertHexadecimal();
             }
         });
     </script>
